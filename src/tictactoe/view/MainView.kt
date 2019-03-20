@@ -1,6 +1,5 @@
 package tictactoe.view
 
-import tictactoe.model.Board
 import tictactoe.model.Game
 import java.awt.Dimension
 import java.awt.Rectangle
@@ -19,29 +18,28 @@ class MainView : MainUseCase.View {
     private val presenter : MainUseCase.Presenter = MainPresenter()
 
     /** UI Components **/
-    private var buttonBlocks = arrayOfNulls<JButton>(3 * 3)
+    private var buttonSquares = arrayOfNulls<JButton>(3 * 3)
     private var labelPlayer : JLabel? = null
 
     override fun drawGame(game: Game) {
-        // Update current player
-        labelPlayer?.text = if (game.currentPlayer == Game.PLAYER_ONE) "Player One (X)" else "Player Two (O)"
+        val winner = game.board.getWinner()
 
-        // Update the board
-        for (y in 0..2) {
-            for (x in 0..2) {
-                val idx = x + y * 3
-
-                buttonBlocks[idx]?.text = when (game.board.blocks[idx]) {
-                    Board.BLOCK_PLAYER_ONE -> "X"
-                    Board.BLOCK_PLAYER_TWO -> "O"
-                    else -> " "
-                }
-            }
+        if (winner == null && !game.board.isFilled()) {
+            // No winner && game still going
+            labelPlayer?.text = "Player (${game.currentPlayer.symbol})"
+        } else {
+            // Winner decided
+            labelPlayer?.text = if (winner == null) "Draw!" else "Player ${winner.symbol} wins!"
         }
+
+        // Update the board view
+        for (y in 0..2)
+            for (x in 0..2)
+                buttonSquares[x + y * 3]?.text = game.board.getSquare(x, y)?.symbol ?: " "
     }
 
-    override fun gameOver(winner: Int) {
-        labelPlayer?.text = "Game Over"
+    override fun handleError(error: String) {
+        labelPlayer?.text = "ERROR: $error"
     }
 
     override fun onAttach() {
@@ -70,10 +68,9 @@ class MainView : MainUseCase.View {
                 // Click action for the button
                 buttonBlock.addActionListener {
                     presenter.play(x, y)
-                    println("pressed $x / $y")
                 }
 
-                buttonBlocks[x + y * 3] = buttonBlock
+                buttonSquares[x + y * 3] = buttonBlock
                 frame.add(buttonBlock)
 
                 buttonX += UI_BUTTON_SIZE + UI_BUTTON_DISTANCE

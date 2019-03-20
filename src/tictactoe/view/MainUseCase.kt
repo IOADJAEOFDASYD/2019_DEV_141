@@ -6,13 +6,13 @@ object MainUseCase {
 
     interface View {
         fun onAttach()
-        fun drawGame(game: Game) // Draws the current game state
-        fun gameOver(winner: Int)
+        fun drawGame(game: Game)
+        fun handleError(error: String)
     }
 
     interface Presenter {
         fun attachView(view : View)
-        fun startGame() // Starts a new game
-        fun play(x: Int, y: Int) // Current player plays on (x, y) square
+        fun startGame()
+        fun play(x: Int, y: Int)
     }
 }
