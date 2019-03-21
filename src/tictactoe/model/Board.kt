@@ -1,14 +1,24 @@
 package tictactoe.model
 
+import java.lang.IllegalArgumentException
+
 /**
  * Describes the current state of the board
  */
 class Board {
     private val squares = arrayOfNulls<Player>(3 * 3)
 
-    fun getSquare(x: Int, y: Int) : Player? = squares[x + y * 3]
+    fun getSquare(x: Int, y: Int) : Player? {
+        if (x < 0 || y < 0 || x > 2 || y > 2)
+            throw IllegalArgumentException()
+
+        return squares[x + y * 3]
+    }
 
     fun setSquare(x: Int, y: Int, player: Player?) {
+        if (x < 0 || y < 0 || x > 2 || y > 2)
+            throw IllegalArgumentException()
+
         squares[x + y * 3] = player
     }
 
@@ -27,6 +37,9 @@ class Board {
      * Returns 'true' if the specified row is fully filled by players, 'false' otherwise.
      */
     fun isRowFilled(y: Int) : Boolean {
+        if (y < 0 || y > 2)
+            throw IllegalArgumentException()
+
         for (x in 0..2)
             if (getSquare(x, y) == null)
                 return false
@@ -38,6 +51,9 @@ class Board {
      * Returns 'true' if the specified column is fully filled by players, 'false' otherwise.
      */
     fun isColumnFilled(x: Int) : Boolean {
+        if (x < 0 || x > 2)
+            throw IllegalArgumentException()
+
         for (y in 0..2)
             if (getSquare(x, y) == null)
                 return false
@@ -60,12 +76,22 @@ class Board {
     /**
      * Returns 'true' if the specified row is fully filled by the same player, 'false' otherwise.
      */
-    fun isRowMatch(y: Int) : Boolean = isRowFilled(y) && getSquare(0, y) == getSquare(1, y) && getSquare(1, y) == getSquare(2, y)
+    fun isRowMatch(y: Int) : Boolean {
+        if (y < 0 || y > 2)
+            throw IllegalArgumentException()
+
+        return isRowFilled(y) && getSquare(0, y) == getSquare(1, y) && getSquare(1, y) == getSquare(2, y)
+    }
 
     /**
      * Returns 'true' if the specified column is fully filled by the same player, 'false' otherwise.
      */
-    fun isColumnMatch(x: Int) : Boolean = isColumnFilled(x) && getSquare(x, 0) == getSquare(x, 1) && getSquare(x, 1) == getSquare(x, 2)
+    fun isColumnMatch(x: Int) : Boolean {
+        if (x < 0 || x > 2)
+            throw IllegalArgumentException()
+
+        return isColumnFilled(x) && getSquare(x, 0) == getSquare(x, 1) && getSquare(x, 1) == getSquare(x, 2)
+    }
 
     /**
      * Returns 'true' if the specified diagonal is fully filled by the same player, 'false' otherwise.
